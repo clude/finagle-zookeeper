@@ -26,7 +26,8 @@ private[finagle] class ZkTransport(trans: Transport[ChannelBuffer, ChannelBuffer
   val maxBuffer: Int = 4096 * 1024
   val onClose: Future[Throwable] = trans.onClose
   def remoteAddress: SocketAddress = trans.remoteAddress
-  private[finagle] val peerCertificate = None
+//  private[finagle] val peerCertificate = None
+  override val peerCertificate = None
 
   def read(): Future[Buf] = this.synchronized {
     read(4) flatMap {
@@ -72,7 +73,8 @@ private[finagle] class BufTransport(trans: Transport[ChannelBuffer, ChannelBuffe
   def localAddress: SocketAddress = trans.localAddress
   val onClose: Future[Throwable] = trans.onClose
   def remoteAddress: SocketAddress = trans.remoteAddress
-  private[finagle] val peerCertificate = None
+//  private[finagle] val peerCertificate = None
+  override val peerCertificate = None
 
   def read(): Future[Buf] =
     trans.read flatMap { chanBuf => Future(ChannelBufferBuf(chanBuf)) }

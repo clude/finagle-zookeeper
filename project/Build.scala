@@ -2,31 +2,26 @@ import sbt._
 import Keys._
 
 object finaglezk extends Build {
-  val finagleVersion = "6.25.0"
+  val finagleVersion = "6.33.0"
   val clientVersion = "0.2.0"
 
-  lazy val root = Project(
-    id = "finagle-ZooKeeper",
-    base = file("."),
-    settings = buildSettings
-  ).aggregate(core, integration, example)
-
-  lazy val core = Project(
-    id = "core",
-    base = file("core"),
-    settings = baseSettings
+  val buildSettings = Defaults.coreDefaultSettings ++ Seq(
+//    name := "finagle-ZooKeeper",
+    organization := "com.twitter",
+    version := clientVersion,
+    scalaVersion := "2.11.7"
+//    scalacOptions := Seq(
+//      "-feature",
+//      "-language:implicitConversions",
+//      "-language:postfixOps",
+//      "-unchecked",
+//      "-deprecation",
+//      "-encoding", "utf8",
+//      "-Ywarn-adapted-args"
+//    )
+//    crossScalaVersions := Seq("2.10.5", "2.11.7")
+    //    scalacOptions ++= Seqsbt("-unchecked", "-deprecation", "-feature")
   )
-
-  lazy val example = Project(
-    id = "example",
-    base = file("example")
-  ).dependsOn(core)
-
-  lazy val integration = Project(
-    id = "integration",
-    base = file("integration"),
-    settings = testSettings
-  ).dependsOn(core, example)
 
   lazy val baseSettings = Seq(
     libraryDependencies ++= Seq(
@@ -37,14 +32,28 @@ object finaglezk extends Build {
     )
   )
 
-  lazy val buildSettings = Seq(
-    name := "finagle-ZooKeeper",
-    organization := "com.twitter",
-    version := clientVersion,
-    scalaVersion := "2.10.5",
-    crossScalaVersions := Seq("2.10.5", "2.11.6"),
-    scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
+  lazy val root = Project(
+    id = "finagle-ZooKeeper",
+    base = file(".")
+  ).settings(buildSettings).aggregate(core, integration, example)
+
+  lazy val core = Project(
+    id = "finalge-ZooKeeper-Core",
+    base = file("core"),
+    settings = buildSettings ++ baseSettings
   )
+
+  lazy val example = Project(
+    id = "example",
+    base = file("example"),
+    settings = buildSettings
+  ).dependsOn(core)
+
+  lazy val integration = Project(
+    id = "integration",
+    base = file("integration"),
+    settings = buildSettings ++ testSettings
+  ).dependsOn(core, example)
 
   lazy val runTests = taskKey[Unit]("Runs configurations and tests")
   lazy val testSettings = Seq(
